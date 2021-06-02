@@ -1,0 +1,6 @@
+{
+    "password": {
+        "regex": "^.{5,25}$",
+        "message": "The password must be between 5 and 25 characters, inclusively."
+    }
+}

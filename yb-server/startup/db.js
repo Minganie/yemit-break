@@ -16,5 +16,6 @@ module.exports = async () => {
     debug("Successfully connected to Mongo");
   } catch (e) {
     debug("Failed to connect to Mongo", e);
+    throw e;
   }
 };

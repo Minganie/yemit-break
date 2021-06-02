@@ -21,7 +21,7 @@ require("./startup/middleware")(app);
 require("./startup/routes")(app);
 
 app.use((err, req, res, next) => {
-  res.status(500).send(err.message || "Unexpected server error");
+  res.status(err.status || 500).send(err.message || "Unexpected server error");
 });
 
 module.exports = app;

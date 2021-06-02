@@ -3,5 +3,5 @@ const usersRouter = require("../routes/users");
 
 module.exports = (app) => {
   app.use("/", indexRouter);
-  app.use("/users", usersRouter);
+  app.use("/api/users", usersRouter);
 };
