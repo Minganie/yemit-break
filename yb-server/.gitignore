@@ -1,3 +1,6 @@
+zecert.crt
+zekey.key
+
 # Logs
 logs
 *.log

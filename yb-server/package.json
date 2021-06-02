@@ -8,11 +8,17 @@
     "test": "jest --verbose"
   },
   "dependencies": {
+    "config": "^3.3.6",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",
+    "express-async-errors": "^3.1.1",
+    "express-force-https": "^1.0.0",
+    "mongoose": "^5.12.12",
     "morgan": "~1.9.1",
-    "npm": "^7.15.1"
+    "npm": "^7.15.1",
+    "validatorjs": "^3.22.1",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "jest": "^27.0.3",

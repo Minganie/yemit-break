@@ -1,0 +1,14 @@
+{
+  "db": {
+    "host": "melsmongo.uouve.azure.mongodb.net",
+    "name": "league-dev"
+  },
+  "cert": {
+    "cert": "./zecert.crt",
+    "key": "./zekey.key"
+  },
+  "logs": {
+    "error": "./error.log",
+    "critical": "./critical.log"
+  }
+}

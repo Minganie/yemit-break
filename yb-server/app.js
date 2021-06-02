@@ -1,20 +1,27 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const express = require("express");
+require("express-async-errors");
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const scribe = require("./utils/scribe");
 
-var app = express();
+const app = express();
+if (process.env.NODE_ENV === "production") {
+  app.use(require("express-force-https"));
+}
+process.on("uncaughtException", (e) => {
+  scribe.error("Uncaught Exception", e);
+  process.exitCode = 1;
+});
+process.on("unhandledRejection", (e) => {
+  scribe.error("Unhandled rejection", e);
+  process.exitCode = 1;
+});
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+require("./startup/db")();
+require("./startup/middleware")(app);
+require("./startup/routes")(app);
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use((err, req, res, next) => {
+  res.status(500).send(err.message || "Unexpected server error");
+});
 
 module.exports = app;

@@ -1,0 +1,14 @@
+{
+  "db": {
+    "host": "melsmongo.uouve.azure.mongodb.net",
+    "name": "league"
+  },
+  "cert": {
+    "cert": "/etc/letsencrypt/live/yemit-break.com/fullchain.pem",
+    "key": "/etc/letsencrypt/live/yemit-break.com/privkey.pem"
+  },
+  "logs": {
+    "error": "/var/log/node/error.log",
+    "critical": "/var/log/node/critical.log"
+  }
+}
