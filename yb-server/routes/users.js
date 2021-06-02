@@ -8,7 +8,6 @@ const YbError = require("../utils/YbError");
 
 const validate = require("../middleware/validate");
 
-/* GET users listing. */
 router.post("/", validate.registration, async (req, res, next) => {
   try {
     const salt = await bcrypt.genSalt(10);
@@ -30,6 +29,25 @@ router.post("/", validate.registration, async (req, res, next) => {
       next(new YbError("Internal Server Error", 500));
     }
   }
+});
+
+router.post("/login", validate.login, async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) throw new YbError("No user is registered with this email", 404);
+
+  const validPassword = await bcrypt.compare(req.body.password, user.password);
+
+  if (!validPassword)
+    throw new YbError("Invalid username and password combination", 400);
+
+  const payload = { ...user };
+  payload.jwt = user.getJwt();
+
+  res.status(200).send(payload);
+});
+
+router.post("/logout", validate.logout, async (req, res, next) => {
+  res.status(200).send({});
 });
 
 module.exports = router;
