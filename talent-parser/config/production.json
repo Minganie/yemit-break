@@ -1,0 +1,6 @@
+{
+  "db": {
+    "host": "melsmongo.uouve.azure.mongodb.net",
+    "name": "league"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "untitled",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "config": "^3.3.6",
+    "csv-parser": "^3.0.0",
+    "debug": "^3.1.0",
+    "mongoose": "^5.12.13"
+  },
+  "devDependencies": {
+    "jest": "^27.0.4",
+    "prettier": "^2.3.0"
+  }
+}
