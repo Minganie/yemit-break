@@ -31,9 +31,4 @@ const login = (req, res, next) => {
   });
 };
 
-const logout = (req, res, next) => {
-  if (req.header("x-auth-token")) next();
-  else next(new YbError("No token provided", 400));
-};
-
-module.exports = { registration, login, logout };
+module.exports = { registration, login };

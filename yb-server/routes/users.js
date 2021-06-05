@@ -46,7 +46,8 @@ router.post("/login", validate.login, async (req, res, next) => {
   res.status(200).send(payload);
 });
 
-router.post("/logout", validate.logout, async (req, res, next) => {
+router.post("/logout", async (req, res, next) => {
+  // we're actually not checking whether they're logged in, since it only changes things client-side and doesn't change anything server-side
   res.status(200).send({});
 });
 
