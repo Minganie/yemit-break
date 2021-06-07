@@ -3,177 +3,148 @@ const request = require("supertest");
 
 const { User } = require("../models/User");
 
-let servers;
-let mel;
+let server;
 const endpoint = "/api/users";
-
-const createMel = async () => {
-  return await request(servers.https).post(endpoint).send({
-    email: "mel@gmail.com",
-    password: "2351a",
-    password_confirmation: "2351a",
-  });
-};
 
 describe(endpoint, () => {
   beforeAll(() => {
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-    servers = require("../bin/www");
+    server = require("../app");
   });
 
   afterAll(async () => {
     await mongoose.disconnect();
-    await servers.http.close();
-    await servers.https.close();
   });
 
   describe("POST /", () => {
-    afterEach(async () => {
-      await User.deleteMany({});
+    let user;
+    beforeEach(() => {
+      user = {
+        email: `qa-users-${Date.now()}@gmail.com`,
+        password: "2351a",
+        password_confirmation: "2351a",
+      };
     });
 
     it("can create a user", async () => {
-      const email = `qa-${Date.now()}@gmail.com`;
-      const res = await request(servers.https).post(endpoint).send({
-        email,
-        password: "2351a",
-        password_confirmation: "2351a",
-      });
+      const res = await request(server).post(endpoint).send(user);
       expect(res.status).toBe(201);
-      const inDb = await User.findOne({ email });
+      const inDb = await User.findOne({ email: user.email });
       expect(inDb).toBeTruthy();
-      await User.deleteOne({ email });
+      await User.deleteOne({ email: user.email });
     });
 
     it("should refuse mismatched passwords", async () => {
-      const email = `qa-${Date.now()}@gmail.com`;
-      const res = await request(servers.https).post(endpoint).send({
-        email,
-        password: "12345",
-        password_confirmation: "21345",
-      });
+      user.password_confirmation = "2351b";
+      const res = await request(server).post(endpoint).send(user);
       expect(res.status).toBe(400);
-      const inDb = await User.findOne({ email });
+      const inDb = await User.findOne({ email: user.email });
       expect(inDb).toBeFalsy();
     });
 
     it("should refuse too short password", async () => {
-      const email = `qa-${Date.now()}@gmail.com`;
-      const res = await request(servers.https).post(endpoint).send({
-        email,
-        password: "12",
-        password_confirmation: "12",
-      });
+      user.password = "12";
+      user.password_confirmation = "12";
+      const res = await request(server).post(endpoint).send(user);
       expect(res.status).toBe(400);
-      const inDb = await User.findOne({ email });
+      const inDb = await User.findOne({ email: user.email });
       expect(inDb).toBeFalsy();
     });
 
     it("should refuse not an email", async () => {
-      const email = `melgmail.com`;
-      const res = await request(servers.https).post(endpoint).send({
-        email,
-        password: "2351a",
-        password_confirmation: "2351a",
-      });
+      user.email = `melgmail.com`;
+      const res = await request(server).post(endpoint).send(user);
       expect(res.status).toBe(400);
-      const inDb = await User.findOne({ email });
+      const inDb = await User.findOne({ email: user.email });
       expect(inDb).toBeFalsy();
     });
 
     it("should refuse a missing email", async () => {
-      const res = await request(servers.https).post(endpoint).send({
-        password: "2351a",
-        password_confirmation: "2351a",
-      });
+      delete user.email;
+      const res = await request(server).post(endpoint).send(user);
       expect(res.status).toBe(400);
     });
 
     it("should refuse an empty request", async () => {
-      const res = await request(servers.https).post(endpoint).send({});
+      const res = await request(server).post(endpoint).send({});
       expect(res.status).toBe(400);
     });
 
     it("should refuse a missing password", async () => {
-      const email = `qa-${Date.now()}@gmail.com`;
-      const res = await request(servers.https).post(endpoint).send({
-        email,
-        password_confirmation: "2351a",
-      });
+      delete user.password;
+      const res = await request(server).post(endpoint).send(user);
       expect(res.status).toBe(400);
-      const inDb = await User.findOne({ email });
+      const inDb = await User.findOne({ email: user.email });
       expect(inDb).toBeFalsy();
     });
 
     it("should refuse a missing password confirmation", async () => {
-      const email = `qa-${Date.now()}@gmail.com`;
-      const res = await request(servers.https).post(endpoint).send({
-        email,
-        password: "2351a",
-      });
+      delete user.password_confirmation;
+      const res = await request(server).post(endpoint).send(user);
       expect(res.status).toBe(400);
-      const inDb = await User.findOne({ email });
+      const inDb = await User.findOne({ email: user.email });
       expect(inDb).toBeFalsy();
     });
 
     it("should refuse an already registered email", async () => {
-      mel = await createMel();
+      await new User(user).save();
 
-      const res = await request(servers.https).post(endpoint).send({
-        email: `mel@gmail.com`,
-        password: "789456",
-        password_confirmation: "789456",
-      });
+      const res = await request(server).post(endpoint).send(user);
       expect(res.status).toBe(400);
     });
   });
 
   describe("POST /login", () => {
-    beforeEach(async () => {
-      mel = await createMel();
+    let user;
+    beforeAll(async () => {
+      user = {
+        email: `qa-users-${Date.now()}@gmail.com`,
+        password: "2351a",
+        password_confirmation: "2351a",
+      };
+      await request(server).post(endpoint).send(user);
     });
 
-    afterEach(async () => {
-      await User.deleteMany({});
+    afterAll(async () => {
+      await User.deleteOne({ email: user.email });
     });
 
     it("can login an existing user user", async () => {
-      const res = await request(servers.https)
+      const res = await request(server)
         .post(endpoint + "/login")
-        .send({ email: "mel@gmail.com", password: "2351a" });
+        .send({ email: user.email, password: user.password });
       expect(res.status).toBe(200);
     });
 
     it("should refuse a bad password", async () => {
-      const res = await request(servers.https)
+      const res = await request(server)
         .post(endpoint + "/login")
-        .send({ email: "mel@gmail.com", password: "2351s" });
+        .send({ email: user.email, password: "notzepassword" });
       expect(res.status).toBe(400);
     });
 
     it("should refuse an unregistered email", async () => {
-      const res = await request(servers.https)
+      const res = await request(server)
         .post(endpoint + "/login")
-        .send({ email: "mela@gmail.com", password: "2351a" });
+        .send({ email: "notzeemail@gmail.com", password: "2351a" });
       expect(res.status).toBe(404);
     });
 
     it("should refuse a missing email", async () => {
-      const res = await request(servers.https)
+      const res = await request(server)
         .post(endpoint + "/login")
-        .send({ password: "2351a" });
+        .send({ password: user.password });
       expect(res.status).toBe(400);
     });
 
     it("should refuse a missing password", async () => {
-      const res = await request(servers.https)
+      const res = await request(server)
         .post(endpoint + "/login")
-        .send({ email: "mel@gmail.com" });
+        .send({ email: user.email });
       expect(res.status).toBe(400);
     });
 
     it("should refuse an empty request", async () => {
-      const res = await request(servers.https)
+      const res = await request(server)
         .post(endpoint + "/login")
         .send({});
       expect(res.status).toBe(400);
@@ -181,28 +152,34 @@ describe(endpoint, () => {
   });
 
   describe("POST /logout", () => {
-    beforeEach(async () => {
-      const mel = await createMel();
+    let user;
+    beforeAll(async () => {
+      user = {
+        email: `qa-users-${Date.now()}@gmail.com`,
+        password: "2351a",
+        password_confirmation: "2351a",
+      };
+      await request(server).post(endpoint).send(user);
     });
 
-    afterEach(async () => {
-      await User.deleteMany({});
+    afterAll(async () => {
+      await User.deleteOne({ email: user.email });
     });
 
     it("can logout a logged in user", async () => {
-      const token = (await User.findOne({ email: "mel@gmail.com" })).getJwt();
-      const res = await request(servers.https)
+      const token = (await User.findOne({ email: user.email })).getJwt();
+      const res = await request(server)
         .post(endpoint + "/logout")
         .set("x-auth-token", token)
         .send({});
       expect(res.status).toBe(200);
     });
 
-    it("should refuse an anonymous user", async () => {
-      const res = await request(servers.https)
+    it("can logout anyone", async () => {
+      const res = await request(server)
         .post(endpoint + "/logout")
         .send({});
-      expect(res.status).toBe(400);
+      expect(res.status).toBe(200);
     });
   });
 });

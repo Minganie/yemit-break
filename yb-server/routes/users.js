@@ -6,7 +6,7 @@ const router = express.Router();
 const { User } = require("../models/User");
 const YbError = require("../utils/YbError");
 
-const validate = require("../middleware/validate");
+const validate = require("../middleware/yb-validate");
 
 router.post("/", validate.registration, async (req, res, next) => {
   try {

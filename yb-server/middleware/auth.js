@@ -22,22 +22,28 @@ const tokenIsValid = (token) => {
 };
 
 const isLogged = (req, res, next) => {
-  tokenIsPresent(req);
-  tokenIsValid(req.header("x-auth-token"));
-  next();
+  try {
+    tokenIsPresent(req);
+    tokenIsValid(req.header("x-auth-token"));
+    next();
+  } catch (e) {
+    next(e);
+  }
 };
 
 const isPlayer = (req, res, next) => {
-  tokenIsPresent(req);
-  req.user = tokenIsValid(req.header("x-auth-token"));
-
-  if (!req.user.permissions.includes("Player"))
-    throw new YbError(
-      "You must be logged in as a player to access this resource.",
-      403
-    );
-
-  next();
+  try {
+    tokenIsPresent(req);
+    req.user = tokenIsValid(req.header("x-auth-token"));
+    if (!req.user.permissions.includes("Player"))
+      throw new YbError(
+        "You must be logged in as a player to access this resource.",
+        403
+      );
+    next();
+  } catch (e) {
+    next(e);
+  }
 };
 
 module.exports = { isLogged, isPlayer };
