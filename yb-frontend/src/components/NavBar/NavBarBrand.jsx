@@ -1,17 +1,19 @@
+import { Link } from "react-router-dom";
+
 function NavBarBrand({ burgerIsOpen, onBurgerToggle }) {
   return (
     <div className="navbar-brand">
-      <a href="/" className="navbar-item">
+      <Link to="/" className="navbar-item">
         <img
           src="logo192.png"
           alt="The League: a FFXIV free company on Mateus (Crystal)"
           width="28"
           height="28"
         />
-      </a>
+      </Link>
 
-      <a
-        href="/"
+      <Link
+        to="/"
         role="button"
         className={`navbar-burger${burgerIsOpen ? " is-active" : ""}`}
         aria-label="menu"
@@ -22,7 +24,7 @@ function NavBarBrand({ burgerIsOpen, onBurgerToggle }) {
         <span aria-hidden="true" />
         <span aria-hidden="true" />
         <span aria-hidden="true" />
-      </a>
+      </Link>
     </div>
   );
 }

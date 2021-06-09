@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function NavBarMenu({ burgerIsOpen, onBurgerToggle }) {
   return (
     <div
@@ -6,26 +8,26 @@ function NavBarMenu({ burgerIsOpen, onBurgerToggle }) {
       onClick={onBurgerToggle}
     >
       <div className="navbar-start">
-        <a href="#" className="navbar-item">
+        <Link to="/" className="navbar-item">
           Our toons
-        </a>
+        </Link>
 
         <div className="navbar-item has-dropdown is-hoverable">
-          <a href="#" className="navbar-link">
+          <Link to="/sheets" className="navbar-link">
             My toons
-          </a>
+          </Link>
 
           <div className="navbar-dropdown">
-            <a href="#" className="navbar-item">
+            <Link to="/sheets/1" className="navbar-item">
               Mel
-            </a>
-            <a href="#" className="navbar-item">
+            </Link>
+            <Link to="/sheets/2" className="navbar-item">
               Jhit
-            </a>
+            </Link>
             <hr className="navbar-divider" />
-            <a href="#" className="navbar-item">
+            <Link to="/sheets" className="navbar-item">
               Create a new toon
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -33,12 +35,12 @@ function NavBarMenu({ burgerIsOpen, onBurgerToggle }) {
       <div className="navbar-end">
         <div className="navbar-item">
           <div className="buttons">
-            <a href="#" className="button is-primary">
+            <Link to="/register" className="button is-primary">
               <strong>Sign up</strong>
-            </a>
-            <a href="#" className="button is-light">
+            </Link>
+            <Link to="/login" className="button is-light">
               Log in
-            </a>
+            </Link>
           </div>
         </div>
       </div>
