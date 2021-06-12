@@ -73,4 +73,17 @@ const toon = async (req, res, next) => {
   }
 };
 
-module.exports = { registration, login, toon };
+const paramIsMongoId = async (req, res, next) => {
+  const schema = Joi.objectId().required();
+  try {
+    const val = await schema.validateAsync(req.params.id);
+    next();
+  } catch (e) {
+    const msg =
+      (e.details && e.details[0] && e.details[0].message) ||
+      "Unknown validation error";
+    next(new YbError(msg, 400));
+  }
+};
+
+module.exports = { registration, login, toon, paramIsMongoId };
