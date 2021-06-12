@@ -9,19 +9,25 @@ const validate = require("../middleware/yb-validate");
 const YbError = require("../utils/YbError");
 
 router.post("/", [auth.isPlayer, validate.toon], async (req, res, next) => {
-  const { body } = req;
-  const t = {
-    user: req.user._id,
-    name: body.name,
-    gender: body.gender,
-    species: body.species,
-    main_hand: body.main_hand,
-    off_hand: body.off_hand,
-    armor: body.armor,
-    talents: body.talents,
-  };
-  let toon = await new Toon(t).save();
-  res.status(201).send(toon);
+  try {
+    const { body } = req;
+    const t = {
+      user: req.user._id,
+      name: body.name,
+      gender: body.gender,
+      species: body.species,
+      main_hand: body.main_hand,
+      off_hand: body.off_hand,
+      armor: body.armor,
+      talents: body.talents,
+    };
+    let toon = await new Toon(t).save();
+    res.status(201).send(toon);
+  } catch (e) {
+    if (e.code && e.code === 11000) {
+      next(new YbError(`A toon named "${req.body.name}" already exists.`, 400));
+    } else next(e);
+  }
 });
 
 router.put(

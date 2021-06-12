@@ -141,6 +141,7 @@ describe("toons", () => {
         .send(toon)
         .set("x-auth-token", user.getJwt());
       expect(res.status).toBe(400);
+      await Toon.deleteOne({ name: toon.name });
     });
   });
 

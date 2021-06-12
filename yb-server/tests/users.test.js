@@ -16,10 +16,13 @@ describe(endpoint, () => {
   });
 
   describe("POST /", () => {
-    let user;
+    let user, email;
+    beforeAll(() => {
+      email = `qa-users-post-${Date.now()}@gmail.com`;
+    });
     beforeEach(() => {
       user = {
-        email: `qa-users-${Date.now()}@gmail.com`,
+        email: email,
         password: "2351a",
         password_confirmation: "2351a",
       };
@@ -90,6 +93,7 @@ describe(endpoint, () => {
 
       const res = await request(server).post(endpoint).send(user);
       expect(res.status).toBe(400);
+      await User.deleteOne({ email: user.email });
     });
   });
 
@@ -97,7 +101,7 @@ describe(endpoint, () => {
     let user;
     beforeAll(async () => {
       user = {
-        email: `qa-users-${Date.now()}@gmail.com`,
+        email: `qa-users-login-${Date.now()}@gmail.com`,
         password: "2351a",
         password_confirmation: "2351a",
       };
@@ -155,7 +159,7 @@ describe(endpoint, () => {
     let user;
     beforeAll(async () => {
       user = {
-        email: `qa-users-${Date.now()}@gmail.com`,
+        email: `qa-users-logout-${Date.now()}@gmail.com`,
         password: "2351a",
         password_confirmation: "2351a",
       };
