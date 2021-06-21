@@ -1,0 +1,10 @@
+{
+    "password": {
+        "regex": "^.{5,25}$",
+        "message": "The password must be between 5 and 25 characters, inclusively."
+    },
+    "sane_string": {
+        "regex": "^[a-zA-Z0-9\\-_' ]{3,50}$",
+        "message": "The :attribute must be between 3 and 50 characters and can only contain letters, numbers, dashes, underscores, apostrophes and spaces."
+    }
+}
