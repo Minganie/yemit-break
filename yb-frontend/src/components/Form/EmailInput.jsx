@@ -6,16 +6,20 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 function EmailInput({ value, error, onChange }) {
+  const id = "email-" + Date.now();
   return (
     <div className="field">
-      <label className="label">Email</label>
+      <label className="label" htmlFor={id}>
+        Email
+      </label>
       <div className="control has-icons-left has-icons-right">
         <input
+          id={id}
           className={`input ${error ? "is-danger" : "is-success"}`}
           type="text"
           placeholder="your.email@gmail.com"
           value={value}
-          onChange={(e) => {
+          onInput={(e) => {
             onChange(e.target.value);
           }}
         />

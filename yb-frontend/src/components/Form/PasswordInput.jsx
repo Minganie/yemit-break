@@ -1,12 +1,16 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock, faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
 
-function PasswordInput({ value, error, onChange }) {
+function PasswordInput({ value, error, onChange, confirm = false }) {
+  const id = (confirm ? "confirm-" : "") + "password-" + Date.now();
   return (
     <div className="field">
-      <label className="label">Password</label>
+      <label className="label" htmlFor={id}>
+        {confirm ? "Confirm Password" : "Password"}
+      </label>
       <div className="control has-icons-left has-icons-right">
         <input
+          id={id}
           className={`input ${error ? "is-danger" : "is-success"}`}
           type="password"
           placeholder="Please just not 12345 ok?"

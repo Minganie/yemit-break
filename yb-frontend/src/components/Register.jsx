@@ -97,6 +97,7 @@ function Register() {
         value={pwConfirm.value}
         error={pwConfirm.error}
         onChange={handlePwConfirmChange}
+        confirm={true}
       />
       <button
         className={`button ${isValid ? "is-primary" : "is-light"}`}
